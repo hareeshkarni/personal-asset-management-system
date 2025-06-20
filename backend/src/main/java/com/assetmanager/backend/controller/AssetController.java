@@ -18,8 +18,9 @@ import com.assetmanager.backend.service.AssetService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/assets")
+@RequestMapping("/api/admin/assets")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class AssetController {
     private final AssetService assetService;
 

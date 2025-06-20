@@ -17,23 +17,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+        private final UserRepository userRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
+        @Override
+        public UserDetails loadUserByUsername(String username)
+                        throws UsernameNotFoundException {
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found: " + username));
+                User user = userRepository.findByUsername(username)
+                                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        // Ensure "ROLE_" prefix is applied
-        String role = "ROLE_" + user.getRole().toUpperCase();
+                // Ensure role is prefixed properly
+                String role = user.getRole();
+                if (!role.startsWith("ROLE_")) {
+                        role = "ROLE_" + role.toUpperCase();
+                }
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(role))
-        );
-    }
+                return new org.springframework.security.core.userdetails.User(
+                                user.getUsername(),
+                                user.getPassword(),
+                                Collections.singletonList(new SimpleGrantedAuthority(role)));
+        }
+
 }
