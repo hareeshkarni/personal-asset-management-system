@@ -6,10 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.assetmanager.backend.exception.CustomException;
 import com.assetmanager.backend.model.AssetStatus;
 import com.assetmanager.backend.repository.AssetStatusRepository;
 
-import jakarta.persistence.EntityNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -19,7 +20,7 @@ public class AssetStatusService {
 
     public AssetStatus createStatus(AssetStatus status) {
         if (repository.existsByName(status.getName()))
-            throw new RuntimeException("Status already exists");
+            throw new CustomException("Status already exists");
         return repository.save(status);
     }
 
@@ -30,7 +31,7 @@ public class AssetStatusService {
 
     public void deleteStatus(Long id) {
         if (!repository.existsById(id))
-            throw new EntityNotFoundException("Status not found");
+            throw new CustomException("Status not found");
         repository.deleteById(id);
     }
 }

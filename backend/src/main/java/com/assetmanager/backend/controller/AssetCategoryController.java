@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.assetmanager.backend.model.AssetCategory;
 import com.assetmanager.backend.service.AssetCategoryService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,7 +27,7 @@ public class AssetCategoryController {
     private final AssetCategoryService assetCategoryService;
 
     @PostMapping
-    public ResponseEntity<AssetCategory> create(@RequestBody AssetCategory category) {
+    public ResponseEntity<AssetCategory> create(@Valid @RequestBody AssetCategory category) {
         return ResponseEntity.ok(assetCategoryService.createCategory(category));
     }
 

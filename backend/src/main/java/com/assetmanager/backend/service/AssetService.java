@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.assetmanager.backend.dto.AssetRequest;
 import com.assetmanager.backend.dto.AssetResponse;
+import com.assetmanager.backend.exception.CustomException;
 import com.assetmanager.backend.model.Asset;
 import com.assetmanager.backend.model.AssetCategory;
 import com.assetmanager.backend.model.AssetStatus;
@@ -39,12 +40,12 @@ public class AssetService {
                 // ✅ Get the category from the DB
                 AssetCategory category = assetCategoryRepository
                                 .findByName(request.getCategory())
-                                .orElseThrow(() -> new EntityNotFoundException(
+                                .orElseThrow(() -> new CustomException(
                                                 "Invalid category: " + request.getCategory()));
 
                 AssetStatus status = assetStatusRepository
                                 .findByNameIgnoreCase(request.getStatus())
-                                .orElseThrow(() -> new RuntimeException("Invalid status"));
+                                .orElseThrow(() -> new CustomException("Invalid status"));
 
                 Asset asset = Asset.builder()
                                 .name(request.getName())
@@ -65,7 +66,7 @@ public class AssetService {
         public List<AssetResponse> getMyAssets(int page, int size) {
                 String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
                 User user = userRepository.findByUsername(currentUsername)
-                                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                                .orElseThrow(() -> new CustomException("User not found"));
 
                 Pageable pageable = PageRequest.of(page, size);
                 Page<Asset> assetPage = assetRepository.findByUser(user, pageable);

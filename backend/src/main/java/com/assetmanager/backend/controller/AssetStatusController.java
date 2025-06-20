@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.assetmanager.backend.model.AssetStatus;
 import com.assetmanager.backend.service.AssetStatusService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,7 +27,7 @@ public class AssetStatusController {
     private final AssetStatusService assetStatusService;
 
     @PostMapping
-    public ResponseEntity<AssetStatus> create(@RequestBody AssetStatus status) {
+    public ResponseEntity<AssetStatus> create(@Valid @RequestBody AssetStatus status) {
         return ResponseEntity.ok(assetStatusService.createStatus(status));
     }
 

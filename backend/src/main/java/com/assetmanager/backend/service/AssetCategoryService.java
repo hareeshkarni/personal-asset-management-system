@@ -6,10 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.assetmanager.backend.exception.CustomException;
 import com.assetmanager.backend.model.AssetCategory;
 import com.assetmanager.backend.repository.AssetCategoryRepository;
 
-import jakarta.persistence.EntityNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -19,7 +20,7 @@ public class AssetCategoryService {
 
     public AssetCategory createCategory(AssetCategory category) {
         if (repository.existsByName(category.getName()))
-            throw new RuntimeException("Category already exists");
+            throw new CustomException("Category already exists");
         return repository.save(category);
     }
 
@@ -31,7 +32,7 @@ public class AssetCategoryService {
 
     public void deleteCategory(Long id) {
         if (!repository.existsById(id))
-            throw new EntityNotFoundException("Category not found");
+            throw new CustomException("Category not found"+ id);
         repository.deleteById(id);
     }
 }

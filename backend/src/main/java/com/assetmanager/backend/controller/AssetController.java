@@ -15,6 +15,7 @@ import com.assetmanager.backend.dto.AssetRequest;
 import com.assetmanager.backend.dto.AssetResponse;
 import com.assetmanager.backend.service.AssetService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,7 +28,7 @@ public class AssetController {
     // 🔐 Only authenticated users can add assets
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<AssetResponse> createAsset(@RequestBody AssetRequest request) {
+    public ResponseEntity<AssetResponse> createAsset(@Valid @RequestBody AssetRequest request) {
         AssetResponse response = assetService.createAsset(request);
         return ResponseEntity.ok(response);
     }

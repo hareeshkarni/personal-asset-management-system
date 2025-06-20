@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.assetmanager.backend.dto.JwtResponse;
 import com.assetmanager.backend.dto.LoginRequest;
 import com.assetmanager.backend.dto.RegisterRequest;
+import com.assetmanager.backend.exception.UserAlreadyExistsException;
 import com.assetmanager.backend.model.User;
 import com.assetmanager.backend.repository.UserRepository;
 
@@ -22,8 +23,30 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public JwtResponse register(RegisterRequest request) {
+        // 🔒 Basic validations
+        if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username is required");
+        }
+
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        if (!request.getEmail().matches(emailRegex)) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+
+        if (request.getPassword() == null || request.getPassword().length() < 6) {
+            throw new IllegalArgumentException("Password must be at least 6 characters long");
+        }
+
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new UserAlreadyExistsException("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistsException("Email already registered");
         }
 
         // Normalize role to uppercase and ensure it starts with "ROLE_"
@@ -58,9 +81,7 @@ public class AuthService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
-                        request.getPassword()
-                )
-        );
+                        request.getPassword()));
 
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));

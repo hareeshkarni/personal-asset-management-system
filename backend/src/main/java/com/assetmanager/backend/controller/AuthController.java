@@ -11,6 +11,7 @@ import com.assetmanager.backend.dto.LoginRequest;
 import com.assetmanager.backend.dto.RegisterRequest;
 import com.assetmanager.backend.service.AuthService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,7 +21,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<JwtResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
