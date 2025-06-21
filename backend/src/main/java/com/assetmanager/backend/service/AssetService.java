@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.assetmanager.backend.dto.AssetRequest;
 import com.assetmanager.backend.dto.AssetResponse;
+import com.assetmanager.backend.dto.PaginatedResponse;
 import com.assetmanager.backend.exception.CustomException;
 import com.assetmanager.backend.model.Asset;
 import com.assetmanager.backend.model.AssetCategory;
@@ -36,8 +37,15 @@ public class AssetService {
                 String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
                 User user = userRepository.findByUsername(currentUsername)
                                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                User assignedUser = user;
+                if ("ROLE_ADMIN".equals(user.getRole()) && request.getUsername() != null
+                                && !request.getUsername().isBlank()) {
+                        assignedUser = userRepository.findByUsername(request.getUsername())
+                                        .orElseThrow(() -> new EntityNotFoundException(
+                                                        "Target user not found: " + request.getUsername()));
+                }
 
-                // ✅ Get the category from the DB
+                // Get the category from the DB
                 AssetCategory category = assetCategoryRepository
                                 .findByName(request.getCategory())
                                 .orElseThrow(() -> new CustomException(
@@ -56,24 +64,36 @@ public class AssetService {
                                 .imageUrl(request.getAssetImageUrl())
                                 .category(category)
                                 .status(status)
-                                .user(user)
+                                .user(assignedUser)
                                 .build();
 
                 Asset saved = assetRepository.save(asset);
                 return mapToResponse(saved);
         }
 
-        public List<AssetResponse> getMyAssets(int page, int size) {
+        public PaginatedResponse<AssetResponse> getMyAssets(int page, int size) {
                 String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
                 User user = userRepository.findByUsername(currentUsername)
                                 .orElseThrow(() -> new CustomException("User not found"));
 
                 Pageable pageable = PageRequest.of(page, size);
-                Page<Asset> assetPage = assetRepository.findByUser(user, pageable);
+                Page<Asset> assetPage;
 
-                return assetPage.getContent().stream()
+                if ("ROLE_ADMIN".equals(user.getRole())) {
+                        assetPage = assetRepository.findAll(pageable);
+                } else {
+                        assetPage = assetRepository.findByUser(user, pageable);
+                }
+
+                List<AssetResponse> content = assetPage.getContent().stream()
                                 .map(this::mapToResponse)
                                 .collect(Collectors.toList());
+
+                return new PaginatedResponse<>(
+                                content,
+                                assetPage.getTotalPages(),
+                                assetPage.getTotalElements(),
+                                assetPage.getNumber());
         }
 
         private AssetResponse mapToResponse(Asset asset) {
@@ -89,6 +109,61 @@ public class AssetService {
                                 .status(asset.getStatus().getName())
                                 .createdAt(asset.getCreatedAt())
                                 .updatedAt(asset.getUpdatedAt())
+                                .assignedTo(asset.getUser().getUsername())
                                 .build();
         }
+
+        public AssetResponse getAssetById(Long id) {
+                Asset asset = assetRepository.findById(id)
+                                .orElseThrow(() -> new EntityNotFoundException("Asset not found with id " + id));
+                return mapToResponse(asset);
+        }
+
+        public void deleteAsset(Long id) {
+                if (!assetRepository.existsById(id)) {
+                        throw new EntityNotFoundException("Asset not found");
+                }
+                assetRepository.deleteById(id);
+        }
+
+        public AssetResponse updateAsset(Long id, AssetRequest request) {
+                Asset asset = assetRepository.findById(id)
+                                .orElseThrow(() -> new EntityNotFoundException("Asset not found with id " + id));
+
+                // Ensure the user updating it is the owner (optional but recommended)
+                String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+                User user = userRepository.findByUsername(currentUsername)
+                                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+                if (!user.getId().equals(asset.getUser().getId()) && !"ROLE_ADMIN".equals(user.getRole())) {
+                        throw new CustomException("Unauthorized to update this asset");
+                }
+
+                AssetCategory category = assetCategoryRepository.findByName(request.getCategory())
+                                .orElseThrow(() -> new CustomException("Invalid category: " + request.getCategory()));
+
+                AssetStatus status = assetStatusRepository.findByNameIgnoreCase(request.getStatus())
+                                .orElseThrow(() -> new CustomException("Invalid status"));
+                if ("ROLE_ADMIN".equals(user.getRole()) && request.getUsername() != null
+                                && !request.getUsername().isBlank()) {
+                        User targetUser = userRepository.findByUsername(request.getUsername())
+                                        .orElseThrow(() -> new EntityNotFoundException(
+                                                        "Target user not found: " + request.getUsername()));
+                        asset.setUser(targetUser);
+                }
+
+                asset.setName(request.getName());
+                asset.setDescription(request.getDescription());
+                asset.setCost(request.getCost());
+                asset.setPurchaseDate(request.getPurchaseDate());
+                asset.setWarrantyExpiryDate(request.getWarrantyExpiryDate());
+                asset.setImageUrl(request.getAssetImageUrl());
+                asset.setCategory(category);
+                asset.setStatus(status);
+
+                Asset updated = assetRepository.save(asset);
+                return mapToResponse(updated);
+
+        }
+
 }

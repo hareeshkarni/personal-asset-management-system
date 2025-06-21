@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,6 +43,8 @@ public class AssetRequest {
     private LocalDate warrantyExpiryDate; // Nullable
 
     @NotBlank(message = "Asset image URL is required")
-    @Pattern(regexp = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$", message = "Invalid image URL")
     private String assetImageUrl; 
+
+    private String username; 
+
 }

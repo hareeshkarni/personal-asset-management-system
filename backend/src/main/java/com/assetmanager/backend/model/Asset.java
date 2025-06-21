@@ -62,7 +62,7 @@ public class Asset {
     private LocalDate warrantyExpiryDate;
 
 
-    @Column(name = "asset_image_url")
+    @Column(name = "asset_image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
      @Column(name = "created_at", updatable = false)

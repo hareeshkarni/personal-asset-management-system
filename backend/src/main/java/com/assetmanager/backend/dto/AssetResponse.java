@@ -27,4 +27,5 @@ public class AssetResponse {
     private String assetImageUrl;
     private LocalDate createdAt;
     private LocalDate updatedAt;
+    private String assignedTo;
 }

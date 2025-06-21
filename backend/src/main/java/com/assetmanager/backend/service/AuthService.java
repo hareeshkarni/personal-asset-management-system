@@ -23,7 +23,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public JwtResponse register(RegisterRequest request) {
-        // 🔒 Basic validations
+        //  Basic validations
         if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
             throw new IllegalArgumentException("Username is required");
         }
