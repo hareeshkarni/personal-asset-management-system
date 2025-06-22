@@ -28,7 +28,7 @@ function AddAssetPage() {
     purchaseDate: '',
     warrantyExpiryDate: '',
     assetImageUrl: '',
-    username: '' 
+    username: ''
   });
 
   const [categories, setCategories] = useState([]);
@@ -65,7 +65,14 @@ function AddAssetPage() {
   }, [token]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Clear username if status is changed to non-ASSIGNED
+    if (name === 'status' && value !== 'ASSIGNED') {
+      setForm({ ...form, [name]: value, username: '' });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -114,7 +121,9 @@ function AddAssetPage() {
               </Select>
             </FormControl>
           </Grid>
-          {userRole === 'ROLE_ADMIN' && (
+
+          {/* Show Assign To only if user is ADMIN and status is ASSIGNED */}
+          {userRole === 'ROLE_ADMIN' && form.status === 'ASSIGNED' && (
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Assign To User</InputLabel>
@@ -128,6 +137,7 @@ function AddAssetPage() {
               </FormControl>
             </Grid>
           )}
+
           <Grid item xs={12}>
             <TextField label="Purchase Date" name="purchaseDate" type="date" value={form.purchaseDate} onChange={handleChange} fullWidth required InputLabelProps={{ shrink: true }} />
           </Grid>

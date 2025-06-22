@@ -76,7 +76,14 @@ function EditAssetPage() {
   }, [id, token]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Reset username if status is changed to non-ASSIGNED
+    if (name === 'status' && value !== 'ASSIGNED') {
+      setForm({ ...form, [name]: value, username: '' });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -129,7 +136,8 @@ function EditAssetPage() {
             </FormControl>
           </Grid>
 
-          {userRole === 'ROLE_ADMIN' && (
+          {/* Conditionally show "Assign To User" */}
+          {userRole === 'ROLE_ADMIN' && form.status === 'ASSIGNED' && (
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Assign To User</InputLabel>

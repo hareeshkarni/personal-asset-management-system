@@ -65,17 +65,22 @@ function Dashboard() {
   };
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm('Are you sure you want to delete this asset?');
-    if (!confirm) return;
-    try {
-      await deleteAsset(id, token);
-      setAssets(prev => prev.filter(a => a.id !== id));
-      setSuccessMessage('Asset deleted successfully');
-    } catch (err) {
-      console.error("Delete failed", err);
-      setError('Failed to delete asset');
-    }
-  };
+  const confirm = window.confirm('Are you sure you want to delete this asset?');
+  if (!confirm) return;
+
+  try {
+    await deleteAsset(id, token);
+    setAssets(prev => ({
+      ...prev,
+      content: prev.content.filter(a => a.id !== id)
+    }));
+    setSuccessMessage('Asset deleted successfully');
+  } catch (err) {
+    console.error("Delete failed", err);
+    setError('Failed to delete asset');
+  }
+};
+
 
   return (
     <Box sx={{ padding: 3 }}>
