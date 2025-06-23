@@ -10,7 +10,6 @@ import com.assetmanager.backend.exception.CustomException;
 import com.assetmanager.backend.model.AssetStatus;
 import com.assetmanager.backend.repository.AssetStatusRepository;
 
-
 import lombok.RequiredArgsConstructor;
 
 @Service

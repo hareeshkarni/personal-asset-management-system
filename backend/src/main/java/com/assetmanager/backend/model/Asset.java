@@ -53,19 +53,16 @@ public class Asset {
     @JoinColumn(name = "status_id", nullable = false)
     private AssetStatus status;
 
-
     @Column(name = "purchase_date", nullable = false)
     private LocalDate purchaseDate;
-
 
     @Column(name = "warranty_expiry")
     private LocalDate warrantyExpiryDate;
 
-
     @Column(name = "asset_image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
-     @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDate createdAt;
 
     @Column(name = "updated_at")

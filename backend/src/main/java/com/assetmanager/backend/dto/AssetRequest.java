@@ -34,17 +34,17 @@ public class AssetRequest {
     private String category; // e.g., "LAPTOP", "MOBILE", etc.
 
     @NotBlank(message = "Status is required")
-    private String status;   // e.g., "ASSIGNED", "AVAILABLE"
+    private String status; // e.g., "ASSIGNED", "AVAILABLE"
 
     @NotNull(message = "Purchase date is required")
-    private LocalDate purchaseDate;    
+    private LocalDate purchaseDate;
 
     @NotNull(message = "Warranty expiry date is required")
     private LocalDate warrantyExpiryDate; // Nullable
 
     @NotBlank(message = "Asset image URL is required")
-    private String assetImageUrl; 
+    private String assetImageUrl;
 
-    private String username; 
+    private String username;
 
 }

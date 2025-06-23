@@ -26,6 +26,5 @@ public class RegisterRequest {
     @NotBlank(message = "Email is required")
     private String email;
 
-    
-    private String role;  // NEW FIELD
+    private String role;
 }

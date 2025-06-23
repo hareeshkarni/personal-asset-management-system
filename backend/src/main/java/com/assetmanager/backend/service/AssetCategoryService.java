@@ -10,7 +10,6 @@ import com.assetmanager.backend.exception.CustomException;
 import com.assetmanager.backend.model.AssetCategory;
 import com.assetmanager.backend.repository.AssetCategoryRepository;
 
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,10 +28,9 @@ public class AssetCategoryService {
         return repository.findAll(pageable).getContent();
     }
 
-
     public void deleteCategory(Long id) {
         if (!repository.existsById(id))
-            throw new CustomException("Category not found"+ id);
+            throw new CustomException("Category not found" + id);
         repository.deleteById(id);
     }
 }

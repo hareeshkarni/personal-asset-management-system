@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 import NotFoundPage from './pages/NotFoundPage'; // ✅ New import
 
+
 function App() {
   return (
     <Router>

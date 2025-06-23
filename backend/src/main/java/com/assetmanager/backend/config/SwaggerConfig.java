@@ -8,7 +8,7 @@ import io.swagger.v3.oas.models.info.Info;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public OpenAPI basOpenAPI(){
+    public OpenAPI basOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
                         .title("Asset Manager API")

@@ -14,7 +14,6 @@ import com.assetmanager.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
-
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
@@ -25,8 +24,8 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = userRepository.findAll().stream()
-            .map(user -> new UserDto(user.getId(), user.getUsername()))
-            .collect(Collectors.toList());
+                .map(user -> new UserDto(user.getId(), user.getUsername()))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
 }

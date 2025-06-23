@@ -14,5 +14,5 @@ import lombok.Setter;
 public class LoginRequest {
     private String username;
     private String password;
-    private String role; // Accepts "ROLE_ADMIN" or "ROLE_USER"
+    private String role;
 }
